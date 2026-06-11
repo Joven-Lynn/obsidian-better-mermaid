@@ -14,17 +14,7 @@ An Obsidian plugin that enhances Mermaid diagram viewing experience with click-t
 ## Preview
 
 Click a Mermaid diagram → opens a floating modal with frosted glass controls:
-
-```
-┌──────────────────────────────────────┐
-│                                      │
-│           Mermaid Diagram            │
-│        (pan / zoom / drag)           │
-│                                      │
-│      Zoom: [▼ 100%]  [Download]      │  ← floating frosted glass
-│                                      │
-└──────────────────────────────────────┘
-```
+<img width="1547" height="850" alt="image" src="https://github.com/user-attachments/assets/12ffd099-4f55-4ad9-a2ae-48ec8d4fb31f" />
 
 ## Installation
 
