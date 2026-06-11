@@ -58,16 +58,17 @@ npm run build
 ## 自定义 CSS 示例
 
 ```css
-/* 修改 Mermaid 主题配色 */
-div.mermaid svg {
-  filter: invert(1) hue-rotate(180deg);
+.markdown-preview-view .mermaid svg,
+.markdown-source-view .mermaid svg {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
-/* 给图表添加边框 */
-div.mermaid {
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 8px;
-  padding: 12px;
+/* 限制最大高度，避免纵向过长 */
+.markdown-preview-view .mermaid,
+.markdown-source-view .mermaid {
+  max-height: 80vh; /* 可根据需要调整，如 70vh、90vh */
+  overflow: auto;    /* 超出时显示滚动条 */
 }
 ```
 
