@@ -67,7 +67,7 @@ export class MermaidImageModal extends Modal {
 
     const btn = controls.createEl('button', { text: this.t('downloadPng') });
     btn.addEventListener('click', () => {
-      this.handleDownload(btn as HTMLButtonElement);
+      void this.handleDownload(btn);
     });
 
     const doc = this.viewport.ownerDocument;
@@ -113,7 +113,8 @@ export class MermaidImageModal extends Modal {
       return;
     }
 
-    const opt = document.createElement('option');
+    const doc = this.contentEl.ownerDocument;
+    const opt = doc.createElement('option');
     opt.setAttribute('data-generated', 'true');
     opt.value = String(scale);
     opt.text = `${Math.round(scale * 100)}%`;
@@ -175,7 +176,8 @@ export class MermaidImageModal extends Modal {
     btn.disabled = true;
     try {
       const pngDataUrl = await this.svgToPng();
-      const link = document.createElement('a');
+      const doc = this.contentEl.ownerDocument;
+      const link = doc.createElement('a');
       link.download = 'mermaid-diagram.png';
       link.href = pngDataUrl;
       link.click();
@@ -205,7 +207,8 @@ export class MermaidImageModal extends Modal {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
+        const doc = this.contentEl.ownerDocument;
+        const canvas = doc.createElement('canvas');
         const pxRatio = 2;
         canvas.width = img.width * pxRatio;
         canvas.height = img.height * pxRatio;

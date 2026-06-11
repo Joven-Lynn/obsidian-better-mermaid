@@ -2,12 +2,12 @@ div.mermaid {
   cursor: pointer;
 }
 
-.better-mermaid-modal {
+.modal-content.better-mermaid-modal {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
-  padding: 0 !important;
+  padding: 0;
   overflow: hidden;
 }
 

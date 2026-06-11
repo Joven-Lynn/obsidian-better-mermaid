@@ -41,7 +41,7 @@ export default class BetterMermaidPlugin extends Plugin {
 
         new MermaidImageModal(
           this.app,
-          mermaidSvg as SVGSVGElement,
+          mermaidSvg,
           this.settings,
         ).open();
       },
@@ -82,8 +82,9 @@ export default class BetterMermaidPlugin extends Plugin {
     try {
       this.cssSheet = new CSSStyleSheet();
       this.cssSheet.replaceSync(allCss);
-      document.adoptedStyleSheets = [
-        ...document.adoptedStyleSheets,
+      const doc = this.app.workspace.containerEl.ownerDocument;
+      doc.adoptedStyleSheets = [
+        ...doc.adoptedStyleSheets,
         this.cssSheet,
       ];
     } catch {
@@ -93,8 +94,9 @@ export default class BetterMermaidPlugin extends Plugin {
 
   private removeCSS() {
     if (this.cssSheet) {
-      document.adoptedStyleSheets = Array.from(
-        document.adoptedStyleSheets,
+      const doc = this.app.workspace.containerEl.ownerDocument;
+      doc.adoptedStyleSheets = Array.from(
+        doc.adoptedStyleSheets,
       ).filter((s) => s !== this.cssSheet);
       this.cssSheet = null;
     }
