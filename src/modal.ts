@@ -28,9 +28,7 @@ export class MermaidImageModal extends Modal {
     super(app);
     this.svg = svg;
     this.settings = settings;
-    this.modalEl.style.width = `${settings.modalWidthPercent}vw`;
-    this.modalEl.style.maxWidth = `${settings.modalWidthPercent}vw`;
-    this.modalEl.style.maxHeight = `${settings.modalHeightPercent}vh`;
+    this.modalEl.addClass('better-mermaid-modal-size');
   }
 
   private t(key: string): string {
@@ -43,7 +41,9 @@ export class MermaidImageModal extends Modal {
     contentEl.addClass('better-mermaid-modal');
 
     this.svgEl = this.svg.cloneNode(true) as SVGSVGElement;
-    this.resetSvgStyle(this.svgEl);
+    this.svgEl.removeAttribute('width');
+    this.svgEl.removeAttribute('height');
+    this.svgEl.addClass('better-mermaid-svg');
 
     this.viewport = contentEl.createDiv({ cls: 'better-mermaid-viewport' });
     this.viewport.appendChild(this.svgEl);
@@ -66,44 +66,28 @@ export class MermaidImageModal extends Modal {
     });
 
     const btn = controls.createEl('button', { text: this.t('downloadPng') });
-    btn.addEventListener('click', async () => {
-      btn.setText(this.t('converting'));
-      (btn as HTMLButtonElement).disabled = true;
-      try {
-        const pngDataUrl = await this.svgToPng();
-        const link = document.createElement('a');
-        link.download = 'mermaid-diagram.png';
-        link.href = pngDataUrl;
-        link.click();
-      } catch (e) {
-        console.error('Failed to convert SVG to PNG:', e);
-      }
-      btn.setText(this.t('downloadPng'));
-      (btn as HTMLButtonElement).disabled = false;
+    btn.addEventListener('click', () => {
+      this.handleDownload(btn as HTMLButtonElement);
     });
+
+    const doc = this.viewport.ownerDocument;
 
     this.viewport.addEventListener('wheel', this.onWheel, { passive: false });
     this.viewport.addEventListener('mousedown', this.onMouseDown);
-    document.addEventListener('mousemove', this.onMouseMove);
-    document.addEventListener('mouseup', this.onMouseUp);
+    doc.addEventListener('mousemove', this.onMouseMove);
+    doc.addEventListener('mouseup', this.onMouseUp);
   }
 
   onClose() {
-    document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('mouseup', this.onMouseUp);
-    const { contentEl } = this;
-    contentEl.empty();
+    const doc = this.viewport.ownerDocument;
+
+    doc.removeEventListener('mousemove', this.onMouseMove);
+    doc.removeEventListener('mouseup', this.onMouseUp);
+    this.contentEl.empty();
     this.scale = 1;
     this.panX = 0;
     this.panY = 0;
     this.isDragging = false;
-  }
-
-  private resetSvgStyle(svg: SVGSVGElement) {
-    svg.removeAttribute('width');
-    svg.removeAttribute('height');
-    svg.style.width = '100%';
-    svg.style.height = '100%';
   }
 
   private setZoom(scale: number) {
@@ -166,7 +150,7 @@ export class MermaidImageModal extends Modal {
     this.dragStartY = e.clientY;
     this.panStartX = this.panX;
     this.panStartY = this.panY;
-    this.viewport.style.cursor = 'grabbing';
+    this.viewport.addClass('better-mermaid-grabbing');
   };
 
   private onMouseMove = (e: MouseEvent) => {
@@ -179,11 +163,27 @@ export class MermaidImageModal extends Modal {
   private onMouseUp = () => {
     if (!this.isDragging) return;
     this.isDragging = false;
-    this.viewport.style.cursor = 'grab';
+    this.viewport.removeClass('better-mermaid-grabbing');
   };
 
   private applyTransform() {
     this.svgEl.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.scale})`;
+  }
+
+  private async handleDownload(btn: HTMLButtonElement) {
+    btn.setText(this.t('converting'));
+    btn.disabled = true;
+    try {
+      const pngDataUrl = await this.svgToPng();
+      const link = document.createElement('a');
+      link.download = 'mermaid-diagram.png';
+      link.href = pngDataUrl;
+      link.click();
+    } catch (e) {
+      console.error('Failed to convert SVG to PNG:', e);
+    }
+    btn.setText(this.t('downloadPng'));
+    btn.disabled = false;
   }
 
   private svgToPng(): Promise<string> {
@@ -199,7 +199,8 @@ export class MermaidImageModal extends Modal {
 
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(cloned);
-    const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+    const dataUrl =
+      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
 
     return new Promise((resolve, reject) => {
       const img = new Image();

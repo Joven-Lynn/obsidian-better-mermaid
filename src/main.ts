@@ -2,9 +2,21 @@ import { Plugin } from 'obsidian';
 import { BetterMermaidSettings, DEFAULT_SETTINGS, BetterMermaidSettingTab } from './settings';
 import { MermaidImageModal } from './modal';
 
+declare global {
+  interface Document {
+    adoptedStyleSheets: CSSStyleSheet[];
+  }
+}
+
+declare global {
+  interface CSSStyleSheet {
+    replaceSync(text: string): void;
+  }
+}
+
 export default class BetterMermaidPlugin extends Plugin {
   settings: BetterMermaidSettings;
-  private styleEl: HTMLStyleElement | null = null;
+  private cssSheet: CSSStyleSheet | null = null;
 
   async onload() {
     await this.loadSettings();
@@ -13,19 +25,28 @@ export default class BetterMermaidPlugin extends Plugin {
 
     this.injectCSS();
 
-    this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-      if (!this.settings.enableClickToZoom) return;
+    this.registerDomEvent(
+      this.app.workspace.containerEl,
+      'click',
+      (evt: MouseEvent) => {
+        if (!this.settings.enableClickToZoom) return;
 
-      const target = evt.target as HTMLElement;
+        const target = evt.target as HTMLElement;
 
-      const mermaidContainer = target.closest('div.mermaid') as HTMLElement | null;
-      if (!mermaidContainer) return;
+        const mermaidContainer = target.closest('div.mermaid');
+        if (!mermaidContainer) return;
 
-      const mermaidSvg = mermaidContainer.querySelector('svg') as SVGSVGElement | null;
-      if (!mermaidSvg) return;
+        const mermaidSvg = mermaidContainer.querySelector('svg');
+        if (!mermaidSvg) return;
 
-      new MermaidImageModal(this.app, mermaidSvg, this.settings).open();
-    }, true);
+        new MermaidImageModal(
+          this.app,
+          mermaidSvg as SVGSVGElement,
+          this.settings,
+        ).open();
+      },
+      true,
+    );
   }
 
   onunload() {
@@ -33,7 +54,11 @@ export default class BetterMermaidPlugin extends Plugin {
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign(
+      {},
+      DEFAULT_SETTINGS,
+      await this.loadData(),
+    ) as BetterMermaidSettings;
   }
 
   async saveSettings() {
@@ -43,22 +68,35 @@ export default class BetterMermaidPlugin extends Plugin {
 
   injectCSS() {
     this.removeCSS();
-    if (this.settings.customCss) {
-      this.styleEl = document.createElement('style');
-      this.styleEl.id = 'better-mermaid-css';
-      this.styleEl.textContent = this.settings.customCss;
-      document.head.appendChild(this.styleEl);
+
+    const sizing = `
+.better-mermaid-modal-size {
+  width: ${this.settings.modalWidthPercent}vw;
+  max-width: ${this.settings.modalWidthPercent}vw;
+  max-height: ${this.settings.modalHeightPercent}vh;
+}`;
+    const allCss = sizing + '\n' + (this.settings.customCss || '');
+
+    if (!allCss.trim()) return;
+
+    try {
+      this.cssSheet = new CSSStyleSheet();
+      this.cssSheet.replaceSync(allCss);
+      document.adoptedStyleSheets = [
+        ...document.adoptedStyleSheets,
+        this.cssSheet,
+      ];
+    } catch {
+      // CSSStyleSheet not supported in older environments
     }
   }
 
   private removeCSS() {
-    if (this.styleEl) {
-      this.styleEl.remove();
-      this.styleEl = null;
-    }
-    const existing = document.getElementById('better-mermaid-css');
-    if (existing) {
-      existing.remove();
+    if (this.cssSheet) {
+      document.adoptedStyleSheets = Array.from(
+        document.adoptedStyleSheets,
+      ).filter((s) => s !== this.cssSheet);
+      this.cssSheet = null;
     }
   }
 }

@@ -57,7 +57,8 @@ const STRINGS: Record<string, Record<string, string>> = {
 };
 
 export function i18n(lang: string, key: string): string {
-  return (STRINGS[lang]?.[key] ?? STRINGS['en'][key] ?? key) as string;
+  const dict = STRINGS[lang] ?? STRINGS['en'];
+  return dict[key] ?? key;
 }
 
 export class BetterMermaidSettingTab extends PluginSettingTab {
@@ -77,7 +78,7 @@ export class BetterMermaidSettingTab extends PluginSettingTab {
     containerEl.empty();
     const s = this.plugin.settings;
 
-    containerEl.createEl('h2', { text: this.t('settingsTitle') });
+    new Setting(containerEl).setName(this.t('settingsTitle')).setHeading();
 
     new Setting(containerEl)
       .setName(this.t('languageLabel'))
@@ -111,7 +112,6 @@ export class BetterMermaidSettingTab extends PluginSettingTab {
         slider
           .setLimits(30, 100, 5)
           .setValue(s.modalWidthPercent)
-          .setDynamicTooltip()
           .onChange(async (value) => {
             s.modalWidthPercent = value;
             await this.plugin.saveSettings();
@@ -135,7 +135,6 @@ export class BetterMermaidSettingTab extends PluginSettingTab {
         slider
           .setLimits(30, 100, 5)
           .setValue(s.modalHeightPercent)
-          .setDynamicTooltip()
           .onChange(async (value) => {
             s.modalHeightPercent = value;
             await this.plugin.saveSettings();
