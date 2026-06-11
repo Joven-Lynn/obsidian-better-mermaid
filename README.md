@@ -58,16 +58,17 @@ Each slider has a reset button to restore default values.
 ## Custom CSS Example
 
 ```css
-/* Change Mermaid theme */
-div.mermaid svg {
-  filter: invert(1) hue-rotate(180deg);
+.markdown-preview-view .mermaid svg,
+.markdown-source-view .mermaid svg {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
-/* Add border around diagrams */
-div.mermaid {
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 8px;
-  padding: 12px;
+/* 限制最大高度，避免纵向过长 */
+.markdown-preview-view .mermaid,
+.markdown-source-view .mermaid {
+  max-height: 80vh; /* 可根据需要调整，如 70vh、90vh */
+  overflow: auto;    /* 超出时显示滚动条 */
 }
 ```
 
