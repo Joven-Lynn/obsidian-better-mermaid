@@ -117,10 +117,9 @@ export class BetterMermaidSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       )
-      .addExtraButton((btn) =>
+      .addButton((btn) =>
         btn
-          .setIcon('reset')
-          .setTooltip(this.t('reset'))
+          .setButtonText(this.t('reset'))
           .onClick(async () => {
             s.modalWidthPercent = DEFAULT_SETTINGS.modalWidthPercent;
             await this.plugin.saveSettings();
@@ -140,10 +139,9 @@ export class BetterMermaidSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       )
-      .addExtraButton((btn) =>
+      .addButton((btn) =>
         btn
-          .setIcon('reset')
-          .setTooltip(this.t('reset'))
+          .setButtonText(this.t('reset'))
           .onClick(async () => {
             s.modalHeightPercent = DEFAULT_SETTINGS.modalHeightPercent;
             await this.plugin.saveSettings();
