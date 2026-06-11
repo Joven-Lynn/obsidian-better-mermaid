@@ -1,4 +1,4 @@
-# Better Mermaid
+# Better Mermaid|[中文](https://github.com/Joven-Lynn/obsidian-better-mermaid/blob/main/README_zh.md)
 
 An Obsidian plugin that enhances Mermaid diagram viewing experience with click-to-zoom, pan & zoom controls, and PNG export.
 
@@ -43,25 +43,25 @@ Then copy `main.js`, `manifest.json`, and `styles.css` to the plugin folder.
 
 ## Usage
 
-| Action | Control |
-|--------|---------|
-| Open modal | Click a Mermaid diagram in reading mode |
-| Pan vertically | Scroll wheel |
-| Pan horizontally | Shift + scroll wheel |
-| Zoom | Ctrl + scroll wheel |
-| Pan freely | Click and drag |
-| Preset zoom | Select from dropdown (20% / 50% / 75% / 100%) |
-| Download PNG | Click **Download PNG** button |
+| Action           | Control                                       |
+| ---------------- | --------------------------------------------- |
+| Open modal       | Click a Mermaid diagram in reading mode       |
+| Pan vertically   | Scroll wheel                                  |
+| Pan horizontally | Shift + scroll wheel                          |
+| Zoom             | Ctrl + scroll wheel                           |
+| Pan freely       | Click and drag                                |
+| Preset zoom      | Select from dropdown (20% / 50% / 75% / 100%) |
+| Download PNG     | Click **Download PNG** button                 |
 
 ## Settings
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| Language | UI language (English / 中文) | English |
-| Enable click to zoom | Toggle the click-to-zoom feature on/off | On |
-| Modal width | Width of the modal (% of viewport) | 80% |
-| Modal height | Height of the modal (% of viewport) | 80% |
-| Custom CSS | CSS rules injected into Obsidian | *(empty)* |
+| Setting              | Description                             | Default   |
+| -------------------- | --------------------------------------- | --------- |
+| Language             | UI language (English / 中文)              | English   |
+| Enable click to zoom | Toggle the click-to-zoom feature on/off | On        |
+| Modal width          | Width of the modal (% of viewport)      | 80%       |
+| Modal height         | Height of the modal (% of viewport)     | 80%       |
+| Custom CSS           | CSS rules injected into Obsidian        | *(empty)* |
 
 Each slider has a reset button to restore default values.
 
